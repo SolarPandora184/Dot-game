@@ -1,98 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Catch the Dot!</title>
+  <meta charset="UTF-8" />
+  <title>Block Blast</title>
   <style>
     body {
       margin: 0;
       font-family: sans-serif;
-      background-color: #111;
-      color: white;
+      background-color: #1a1a1a;
       overflow: hidden;
+      color: white;
     }
     #gameArea {
       position: relative;
       width: 100vw;
       height: 100vh;
-      background: radial-gradient(circle, #222 0%, #000 100%);
     }
-    #dot {
-      width: 50px;
-      height: 50px;
-      background-color: red;
-      border-radius: 50%;
+    .block {
+      width: 60px;
+      height: 60px;
+      background: #4CAF50;
       position: absolute;
       cursor: pointer;
+      border-radius: 8px;
+      transition: transform 0.1s;
     }
-    #scoreboard {
+    .block:active {
+      transform: scale(0.9);
+    }
+    #scoreBoard {
       position: absolute;
       top: 10px;
       left: 10px;
       font-size: 20px;
     }
-    #timer {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 20px;
-    }
-    #endMessage {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 32px;
-      display: none;
-    }
   </style>
 </head>
 <body>
   <div id="gameArea">
-    <div id="dot"></div>
-    <div id="scoreboard">Score: 0</div>
-    <div id="timer">Time: 30</div>
-    <div id="endMessage">Time's up! Score: <span id="finalScore"></span></div>
+    <div id="scoreBoard">Score: 0</div>
   </div>
 
   <script>
-    const dot = document.getElementById('dot');
     const gameArea = document.getElementById('gameArea');
-    const scoreboard = document.getElementById('scoreboard');
-    const timerDisplay = document.getElementById('timer');
-    const endMessage = document.getElementById('endMessage');
-    const finalScore = document.getElementById('finalScore');
-
+    const scoreBoard = document.getElementById('scoreBoard');
     let score = 0;
-    let timeLeft = 30;
 
-    function moveDot() {
-      const maxX = window.innerWidth - 50;
-      const maxY = window.innerHeight - 50;
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
-      dot.style.left = x + 'px';
-      dot.style.top = y + 'px';
+    function spawnBlock() {
+      const block = document.createElement('div');
+      block.className = 'block';
+      const maxX = window.innerWidth - 60;
+      const maxY = window.innerHeight - 60;
+      block.style.left = Math.random() * maxX + 'px';
+      block.style.top = Math.random() * maxY + 'px';
+      block.onclick = () => {
+        block.remove();
+        score++;
+        scoreBoard.textContent = 'Score: ' + score;
+        spawnBlock();
+      };
+      gameArea.appendChild(block);
     }
 
-    dot.addEventListener('click', () => {
-      score++;
-      scoreboard.textContent = 'Score: ' + score;
-      moveDot();
-    });
-
-    moveDot();
-
-    const timer = setInterval(() => {
-      timeLeft--;
-      timerDisplay.textContent = 'Time: ' + timeLeft;
-      if (timeLeft <= 0) {
-        clearInterval(timer);
-        dot.style.display = 'none';
-        finalScore.textContent = score;
-        endMessage.style.display = 'block';
-      }
-    }, 1000);
+    // Start with one block
+    spawnBlock();
   </script>
 </body>
 </html>
